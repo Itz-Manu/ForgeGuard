@@ -1,9 +1,14 @@
+import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 
 function App() {
   return (
-    <div className="App bg-black text-white">
+    <div className="bg-black text-white min-h-screen">
       <Home />
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
     </div>
   );
 }
