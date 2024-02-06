@@ -6,14 +6,17 @@ export default function PassGen({ setpasswordCopied }) {
 
     const [password, setPassword] = useState('');
     const [length, setLength] = useState(7);
+    const [count, setCount] = useState(localStorage.length);    // For local storage
 
     const [uppercase, setUppercase] = useState(false);
     const [lowercase, setLowercase] = useState(true);
     const [numbers, setNumbers] = useState(false);
     const [symbols, setSymbols] = useState(false);
 
+
     const passRef = useRef(null);
 
+    // Genrate Random Password
     const passGenarator = useCallback(() => {
         const chars = `${uppercase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : ''}${lowercase ? 'abcdefghijklmnopqrstuvwxyz' : ''}${numbers ? '0123456789' : ''}${symbols ? '!@#$%^&*()_+?><:{}[]' : ''}`;
         let passwordLength = length;
@@ -33,21 +36,22 @@ export default function PassGen({ setpasswordCopied }) {
         passGenarator();
     }, [uppercase, lowercase, numbers, symbols, length]);
 
+    // Handle Copy Button
     function copybtnHandler() {
         if (passRef.current.value === '') {
             toast.error('Frist Create Password!');
             return;
         } else {
-            passRef.current.select(); // select the password
+            passRef.current.select();                                   // select the password
 
-            let maxCharacters = window.innerWidth <= 768 ? 17 : 30; // Set the maximum characters based on screen size
-            passRef.current.setSelectionRange(0, maxCharacters); // for select specific range
+            let maxCharacters = window.innerWidth <= 768 ? 17 : 30;     // Set the maximum characters based on screen size
+            passRef.current.setSelectionRange(0, maxCharacters);        // for select specific range
 
-            const selectedText = passRef.current.value.substring(0, maxCharacters); // Get the selected text
-            window.navigator.clipboard.writeText(selectedText); // copy to clipboard
+            const selectedText = passRef.current.value.substring(0, maxCharacters);         // Get the selected text
+            window.navigator.clipboard.writeText(selectedText);                             // copy to clipboard
 
             savePassword(selectedText);
-            setpasswordCopied((prev) => !prev);
+            setpasswordCopied((prev) => !prev);                         // For local storage
             toast.success('Successfully Copied!');
         }
     }
@@ -72,14 +76,11 @@ export default function PassGen({ setpasswordCopied }) {
         }
     }
 
-    // Loacal Storage
-    const [count, setCount] = useState(localStorage.length);
-
+    // Save Password to Local Storage
     function savePassword(selectedText) {
         localStorage.setItem(count, JSON.stringify(selectedText));
         setCount(count + 1);
     }
-
 
     return (
         <div className='w-full md:w-[40vw] p-2'>
