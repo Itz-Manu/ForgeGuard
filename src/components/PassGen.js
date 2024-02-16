@@ -36,23 +36,40 @@ export default function PassGen({ setpasswordCopied }) {
         passGenarator();
     }, [uppercase, lowercase, numbers, symbols, length]);
 
+
     // Handle Copy Button
     function copybtnHandler() {
         if (passRef.current.value === '') {
             toast.error('Frist Create Password!');
             return;
         } else {
-            passRef.current.select();                                   // select the password
 
-            let maxCharacters = window.innerWidth <= 768 ? 17 : 30;     // Set the maximum characters based on screen size
-            passRef.current.setSelectionRange(0, maxCharacters);        // for select specific range
+            let passwordExists = false;
 
-            const selectedText = passRef.current.value.substring(0, maxCharacters);         // Get the selected text
-            window.navigator.clipboard.writeText(selectedText);                             // copy to clipboard
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const storedPassword = localStorage.getItem(key).replace(/["']/g, '');
 
-            savePassword(selectedText);
-            setpasswordCopied((prev) => !prev);                         // For local storage
-            toast.success('Successfully Copied!');
+                if (storedPassword === passRef.current.value) {
+                    passwordExists = true;
+                    break;
+                }
+            }
+
+            if (passwordExists) {
+                toast.error('This password already exists!');
+            } else {
+                passRef.current.select(); // Select the password
+                let maxCharacters = window.innerWidth <= 768 ? 17 : 30;     // Set the maximum characters based on screen size
+                passRef.current.setSelectionRange(0, maxCharacters);        // for select specific range
+
+                const selectedText = passRef.current.value.substring(0, maxCharacters);         // Get the selected text
+                window.navigator.clipboard.writeText(selectedText);                             // copy to clipboard
+
+                savePassword(selectedText);
+                setpasswordCopied((prev) => !prev);                         // For local storage
+                toast.success('Successfully Copied!');
+            }
         }
     }
 
